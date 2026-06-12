@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fake Victim Mail - ORION-SAFE-MARKER-2026-06</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f7fb;
+      color: #17202c;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 22px;
+      background: #fff;
+      border-bottom: 1px solid #ccd4df;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 34px auto;
+      padding: 0 24px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 18px;
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid #d6deea;
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .marker {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 5px;
+      background: #ffe8a8;
+      color: #3b2b00;
+      font-weight: 700;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid #e6ebf2;
+    }
+
+    code {
+      overflow-wrap: anywhere;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    button {
+      margin-top: 18px;
+      min-height: 38px;
+      padding: 8px 13px;
+      border: 1px solid #68778c;
+      border-radius: 6px;
+      background: #f8fafc;
+      color: #142033;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        background: #10161f;
+        color: #e9eef6;
+      }
+
+      header,
+      .panel {
+        background: #17202b;
+        border-color: #344254;
+      }
+
+      .row {
+        border-color: #2a3646;
+      }
+
+      button {
+        background: #10161f;
+        color: #e9eef6;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Fake Victim Mail</strong>
+    <span class="marker">ORION-SAFE-MARKER-2026-06</span>
+  </header>
+
+  <main>
+    <h1>Logged-In Victim App Simulation</h1>
+    <p>This controlled page stores fake victim-only markers, then navigates to a controlled attacker redirect endpoint.</p>
+
+    <div class="layout">
+      <aside class="panel">
+        <h2>Profile</h2>
+        <p><strong>Asha Testuser</strong></p>
+        <p><code>victim@controlled.test</code></p>
+        <p>Origin: <code id="origin"></code></p>
+      </aside>
+
+      <section class="panel">
+        <h2>Inbox Markers</h2>
+        <div class="row"><span>Subject</span><code id="inbox"></code></div>
+        <div class="row"><span>CSRF marker</span><code id="csrf"></code></div>
+        <div class="row"><span>Attacker endpoint</span><code id="attacker"></code></div>
+        <p id="status">Ready. Click the button to start the controlled PoC navigation.</p>
+        <button id="start">Start Controlled PoC</button>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const marker = "ORION-SAFE-MARKER-2026-06";
+    const params = new URLSearchParams(location.search);
+    const attacker = params.get("attacker") || "https://attacker.yourdomain.example/real-poc-attacker-redirect";
+
+    const profile = `fake-profile:victim@controlled.test:${marker}`;
+    const inbox = `fake-inbox-subject:Quarterly report ${marker}`;
+    const csrf = `fake-csrf-token:${marker}`;
+
+    localStorage.setItem("fake_victim_profile", profile);
+    localStorage.setItem("fake_victim_inbox", inbox);
+    localStorage.setItem("fake_victim_csrf", csrf);
+
+    document.getElementById("origin").textContent = location.origin;
+    document.getElementById("inbox").textContent = inbox;
+    document.getElementById("csrf").textContent = csrf;
+    document.getElementById("attacker").textContent = attacker;
+
+    document.getElementById("start").addEventListener("click", () => {
+      document.getElementById("status").textContent = "Navigating to controlled attacker redirect endpoint...";
+      location.href = attacker;
+    });
+  </script>
+</body>
+</html>
